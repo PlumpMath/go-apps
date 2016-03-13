@@ -2,6 +2,9 @@ package country
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -40,5 +43,28 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		if err = json.NewEncoder(w).Encode(countries); err != nil {
 			panic(err)
 		}
+	}
+}
+
+func Create(w http.ResponseWriter, r *http.Request) {
+	var icountry Country
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	if err != nil {
+		panic(err)
+	}
+	if err := r.Body.Close(); err != nil {
+		panic(err)
+	}
+	if err := json.Unmarshal(body, &icountry); err != nil {
+		w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+		w.WriteHeader(422) // unprocessable entity
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			panic(err)
+		}
+	}
+	if err := icountry.Create(); err != nil {
+		fmt.Fprintf(w, "Failed to create new country"+err.Error())
+	} else {
+		fmt.Fprintf(w, "New Country Created")
 	}
 }

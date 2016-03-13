@@ -11,4 +11,10 @@ var Routes = CountryRoutes{
 		"/v1",
 		Index,
 	},
+	common.Route{
+		"Create",
+		"POST",
+		"/v1",
+		Create,
+	},
 }

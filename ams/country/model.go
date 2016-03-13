@@ -13,7 +13,7 @@ const (
 )
 
 type Country struct {
-	Id   bson.ObjectId `json:"id"  bson:"id,omitempty"`
+	Id   bson.ObjectId `json:"id"  bson:"_id,omitempty"`
 	Code string        `json:"code"`
 	Name string        `json:"name"`
 }
@@ -31,7 +31,7 @@ func (c Country) Create() error {
 }
 
 func All() ([]Country, error) {
-	session, err := mgo.Dial("host")
+	session, err := mgo.Dial(host)
 	if err != nil {
 		panic(err)
 	}
