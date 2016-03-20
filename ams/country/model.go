@@ -1,14 +1,12 @@
+// Copyright 2016 @jittakal
 package country
 
 import (
 	"github.com/jittakal/go-apps/ams/common"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
 const (
-	host       = common.Host
-	database   = common.Database
 	collection = "country"
 )
 
@@ -19,26 +17,22 @@ type Country struct {
 }
 
 func (c Country) Create() error {
-	session, err := mgo.Dial(host)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
+	session, database := common.Session()
+	defer common.Close(session)
 
-	country := session.DB(database).C(collection)
-	err = country.Insert(&c)
-	return err
+	country := database.C(collection)
+	return country.Insert(&c)
 }
 
 func All() ([]Country, error) {
-	session, err := mgo.Dial(host)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
+	session, database := common.Session()
+	defer common.Close(session)
 
-	country := session.DB(database).C(collection)
+	country := database.C(collection)
 	result := []Country{}
-	err = country.Find(bson.M{}).All(&result)
-	return result, err
+	if err := country.Find(bson.M{}).All(&result); err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

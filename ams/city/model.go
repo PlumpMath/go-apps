@@ -13,9 +13,10 @@ const (
 )
 
 type City struct {
-	Id   bson.ObjectId `json:"id"        bson:"_id,omitempty"`
-	Code string        `json:"code"`
-	Name string        `json:"name"`
+	Id      bson.ObjectId `json:"id"        bson:"_id,omitempty"`
+	StateId bson.ObjectId `json:"state_id"`
+	Code    string        `json:"code"`
+	Name    string        `json:"name"`
 }
 
 func (c City) Create() error {

@@ -7,44 +7,28 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/jittakal/go-apps/ams/common"
+	"github.com/jittakal/go-apps/ams/response"
 )
 
-type HyperLink struct {
-	Relation string `json:"rel"`
-	URL      string `json:"url"`
-	Method   string `json:"method"`
-}
-
-type ResponseState struct {
-	State State       `json:"state"`
-	Links []HyperLink `json:"links"`
-}
-
 func Index(w http.ResponseWriter, r *http.Request) {
-	defer common.InternalServerError(w, r)
+	defer response.InternalError(w)
 
 	states, err := All()
 
 	if err != nil {
-		common.ResponseServerError(http.StatusInternalServerError, err.Error(), w, r)
+		response.Error(http.StatusInternalServerError, err.Error(), w)
 	} else {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-
-		if err = json.NewEncoder(w).Encode(states); err != nil {
-			panic(err)
-		}
+		response.Ok(states, w)
 	}
 }
 
 func IndexWithLink(w http.ResponseWriter, r *http.Request) {
-	defer common.InternalServerError(w, r)
+	defer response.InternalError(w)
 
 	states, err := All()
 
 	if err != nil {
-		common.ResponseServerError(http.StatusInternalServerError, err.Error(), w, r)
+		response.Error(http.StatusInternalServerError, err.Error(), w)
 	} else {
 		state := states[0]
 		responseState := ResponseState{
@@ -58,12 +42,7 @@ func IndexWithLink(w http.ResponseWriter, r *http.Request) {
 			},
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-
-		if err = json.NewEncoder(w).Encode(responseState); err != nil {
-			panic(err)
-		}
+		response.Ok(responseState, w)
 	}
 }
 
