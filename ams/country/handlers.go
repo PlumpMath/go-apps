@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/jittakal/go-apps/ams/response"
 )
 
@@ -20,6 +21,21 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			err.Error(), w)
 	} else {
 		response.Ok(countries, w)
+	}
+}
+
+func FindId(w http.ResponseWriter, r *http.Request) {
+	defer response.InternalError(w)
+
+	params := mux.Vars(r)
+
+	id := params["id"]
+	country, err := FindById(id)
+
+	if err != nil {
+		response.Error(http.StatusNotFound, err.Error(), w)
+	} else {
+		response.Ok(country, w)
 	}
 }
 

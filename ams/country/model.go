@@ -24,6 +24,30 @@ func (c Country) Create() error {
 	return country.Insert(&c)
 }
 
+func (c Country) Update() error {
+	session, database := common.Session()
+	defer common.Close(session)
+
+	country := database.C(collection)
+	return country.Update(bson.M{"_id": c.Id}, c)
+}
+
+func FindById(id string) (Country, error) {
+	session, database := common.Session()
+	defer common.Close(session)
+
+	country := database.C(collection)
+	result := Country{}
+
+	err := country.FindId(bson.ObjectIdHex(id)).One(&result)
+	//	defer func() {
+	//		if r := recover(); r != nil {
+	//			err = Error(r)
+	//		}
+	//	}()
+	return result, err
+}
+
 func All() ([]Country, error) {
 	session, database := common.Session()
 	defer common.Close(session)

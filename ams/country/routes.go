@@ -12,6 +12,12 @@ var Routes = CountryRoutes{
 		Index,
 	},
 	common.Route{
+		"FindId",
+		"GET",
+		"/v1/{id:[a-z0-9]+}",
+		FindId,
+	},
+	common.Route{
 		"Create",
 		"POST",
 		"/v1",
