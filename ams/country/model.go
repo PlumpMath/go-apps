@@ -1,7 +1,13 @@
-// Copyright 2016 @jittakal
+// Copyright 2016 Jittakal Author. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package country
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/jittakal/go-apps/ams/common"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -39,13 +45,12 @@ func FindById(id string) (Country, error) {
 	country := database.C(collection)
 	result := Country{}
 
-	err := country.FindId(bson.ObjectIdHex(id)).One(&result)
-	//	defer func() {
-	//		if r := recover(); r != nil {
-	//			err = Error(r)
-	//		}
-	//	}()
-	return result, err
+	if bson.IsObjectIdHex(id) {
+		err := country.FindId(bson.ObjectIdHex(id)).One(&result)
+		return result, err
+	} else {
+		return result, errors.New(fmt.Sprintf("Invalid Object Id: %s", id))
+	}
 }
 
 func All() ([]Country, error) {
